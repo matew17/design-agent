@@ -57,7 +57,15 @@ if command -v gh >/dev/null 2>&1 && ! gh auth status >/dev/null 2>&1; then
   gh auth login --web --git-protocol https && gh auth setup-git
 fi
 
-# 4. Trust this project for Codex
+# 4. Make the Codex CLI bundled with the ChatGPT app available as `codex`
+bundled="/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"
+if ! command -v codex >/dev/null 2>&1 && [ -x "$bundled" ]; then
+  ln -sf "$bundled" "$HOME/.local/bin/codex"
+  grep -q '.local/bin' "$HOME/.zshrc" 2>/dev/null || echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc"
+  echo "Linked the app's Codex CLI as ~/.local/bin/codex"
+fi
+
+# 5. Trust this project for Codex
 cfg="$HOME/.codex/config.toml"
 mkdir -p "$HOME/.codex"
 touch "$cfg"
@@ -65,6 +73,10 @@ if ! grep -Fq "[projects.\"$here\"]" "$cfg"; then
   printf '\n[projects."%s"]\ntrust_level = "trusted"\n' "$here" >> "$cfg"
   echo "Marked $here as a trusted Codex project."
 fi
+
+# 6. Make the MCP servers visible in the app's settings
+echo "Syncing MCP servers into ~/.codex/config.toml"
+bash scripts/sync-mcp.sh
 
 echo
 echo "Setup complete. Next steps:"

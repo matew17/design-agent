@@ -59,3 +59,6 @@ written versions of each team process.
   `.codex/config.toml` once its command and sign-in are known.
 - Project settings load only after the folder is trusted and hooks are
   trusted. `bash scripts/doctor.sh` reports both.
+- The app's MCP settings page manages `~/.codex/config.toml`, so the install
+  copies the project's MCP entries there with `scripts/sync-mcp.sh`. Re-run it
+  after adding a server to `.codex/config.toml`.

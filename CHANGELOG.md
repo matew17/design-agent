@@ -2,6 +2,11 @@
 
 All notable changes to the design agent tool. Bump `VERSION` with every entry.
 
+## 0.1.2 - 2026-11-04
+
+- `scripts/sync-mcp.sh` copies MCP servers into the user config so the app lists them.
+- Install links the app's bundled Codex CLI as `codex` for Terminal use.
+
 ## 0.1.1 - 2026-11-04
 
 - Default to "Approve for me" (`approvals_reviewer = "auto_review"`).
