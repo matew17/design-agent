@@ -10,6 +10,9 @@ project_doc_max_bytes = 65536
 # (other folders, network from shell commands) needs approval.
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+# "Approve for me" in the app: eligible approval prompts go to Codex's reviewer
+# instead of the designer. Forbidden rules and the sandbox still apply.
+approvals_reviewer = "auto_review"
 
 [features]
 hooks = true

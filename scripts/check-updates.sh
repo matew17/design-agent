@@ -11,6 +11,10 @@ cd "$root" || exit 0
 branch=$(default_branch)
 version=$(cat VERSION 2>/dev/null || echo "unknown")
 
+# Leave a trace so "did the hook run?" has a simple answer: cat .local/hooks.log
+mkdir -p .local
+log() { printf '%s check-updates: %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$1" >> .local/hooks.log; }
+
 notes=()
 
 if git remote get-url origin >/dev/null 2>&1; then
@@ -40,11 +44,13 @@ fi
 
 if [ ${#notes[@]} -eq 0 ]; then
   ctx="Design agent v${version} is up to date."
+  log "v${version} up to date"
   printf '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"%s"}}\n' "$(json_escape "$ctx")"
   exit 0
 fi
 
 msg=$(printf '%s\n' "${notes[@]}")
+log "${#notes[@]} notice(s): $(printf '%s' "$msg" | head -1)"
 ctx="Design agent v${version} session notices (tell the designer in one or two sentences, then continue):"$'\n'"${msg}"
 printf '{"systemMessage":"%s","hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"%s"}}\n' \
   "$(json_escape "$msg")" "$(json_escape "$ctx")"
