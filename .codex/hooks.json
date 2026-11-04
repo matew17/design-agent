@@ -1,0 +1,18 @@
+{
+  "description": "Design agent project hooks. Review and trust them once in Settings > Hooks (app) or /hooks (CLI).",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash scripts/check-updates.sh",
+            "statusMessage": "Checking for design agent updates",
+            "timeout": 20
+          }
+        ]
+      }
+    ]
+  }
+}

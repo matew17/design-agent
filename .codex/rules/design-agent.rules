@@ -1,0 +1,34 @@
+# Command rules for the design agent (Starlark prefix rules).
+# Most restrictive decision wins: forbidden > prompt > allow.
+
+# Read-only git and the maintenance scripts run without prompting.
+prefix_rule(
+    pattern = ["git", ["status", "fetch", "log", "diff", "branch", "rev-parse", "rev-list", "remote", "show", "stash"]],
+    decision = "allow",
+)
+prefix_rule(pattern = ["bash", "scripts/check-updates.sh"], decision = "allow")
+prefix_rule(pattern = ["bash", "scripts/doctor.sh"], decision = "allow")
+prefix_rule(pattern = ["bash", "scripts/update.sh"], decision = "allow")
+
+# Sharing pushes a branch: ask first so the designer sees it happen.
+prefix_rule(
+    pattern = ["bash", "scripts/share.sh"],
+    decision = "prompt",
+    justification = "Creates a branch, commits your changes and opens a pull request.",
+)
+prefix_rule(pattern = ["git", "push"], decision = "prompt")
+
+# Destructive operations are never allowed from the agent.
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f", "--force-with-lease"]],
+    decision = "forbidden",
+    justification = "Force pushes are not allowed. Use @share-changes to open a pull request instead.",
+)
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+    justification = "Hard resets discard work. Ask the designer to use @share-changes or @update-tool.",
+)
+prefix_rule(pattern = ["git", "clean"], decision = "forbidden", justification = "Would delete untracked files.")
+prefix_rule(pattern = ["git", "branch", ["-D", "-d"]], decision = "forbidden", justification = "Branch deletion is manual.")
+prefix_rule(pattern = ["rm", ["-rf", "-fr", "-r"]], decision = "forbidden", justification = "Recursive deletes are not allowed.")

@@ -1,0 +1,42 @@
+# Project-level Codex configuration for the design agent.
+# Loaded by the desktop app, CLI and IDE extension once this folder is trusted.
+# Keys that must stay in ~/.codex/config.toml (provider, auth, notify, profiles)
+# are intentionally not set here.
+
+# How much of the AGENTS.md chain to load (bytes). Default is 32 KiB.
+project_doc_max_bytes = 65536
+
+# Local commands may edit files inside this project only. Everything else
+# (other folders, network from shell commands) needs approval.
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+[features]
+hooks = true
+
+# ---------------------------------------------------------------------------
+# MCP servers. Remote servers authenticate with OAuth by default: in the
+# desktop app open Settings > MCP servers and press "Authenticate"; in the CLI
+# run `codex mcp login github` / `codex mcp login figma`.
+# ---------------------------------------------------------------------------
+
+[mcp_servers.github]
+url = "https://api.githubcopilot.com/mcp/"
+# Keep the tool surface small: tickets, repos and pull requests only.
+http_headers = { "X-MCP-Toolsets" = "issues,repos,pull_requests" }
+startup_timeout_sec = 30
+# Fallback if OAuth is not available on a machine: create a fine-grained PAT,
+# export GITHUB_PAT_TOKEN in the environment Codex runs in, and uncomment:
+# bearer_token_env_var = "GITHUB_PAT_TOKEN"
+
+[mcp_servers.figma]
+url = "https://mcp.figma.com/mcp"
+startup_timeout_sec = 30
+# Fallback with a personal access token from Figma settings:
+# bearer_token_env_var = "FIGMA_OAUTH_TOKEN"
+
+# Add the shared component library MCP here when its launch command and auth
+# model are known, for example:
+# [mcp_servers.components]
+# command = "npx"
+# args = ["-y", "@client/components-mcp"]

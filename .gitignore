@@ -1,0 +1,11 @@
+# Local tooling state (never commit)
+.local/
+.env
+*.log
+.DS_Store
+# Codex local state if someone runs with CODEX_HOME pointing here
+.codex/auth.json
+.codex/sessions/
+.codex/archived_sessions/
+.codex/cache/
+.codex/*.sqlite*
